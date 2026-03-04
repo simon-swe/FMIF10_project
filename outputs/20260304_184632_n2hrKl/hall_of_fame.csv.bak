@@ -1,0 +1,13 @@
+Complexity,Loss,Equation
+1,0.46639228,"0.402549"
+3,0.28087354,"Electricity_and_heat_per_capita * 0.12523809"
+4,0.2259878,"log(Transport_per_capita / 1.663846)"
+5,0.16643181,"(Transport_per_capita / 26.133638) * Electricity_and_heat_per_capita"
+8,0.12409783,"Electricity_and_heat_per_capita / exp(exp(inv(Transport_per_capita) * 2.1829903))"
+10,0.103365265,"(Land_use_change_and_forestry_per_capita + Electricity_and_heat_per_capita) / exp(exp(inv(Transport_per_capita) * 2.492488))"
+12,0.09821533,"((Electricity_and_heat_per_capita * 1.1810037) + Land_use_change_and_forestry_per_capita) / exp(exp(inv(Transport_per_capita) * 2.7391906))"
+17,0.08966588,"(Electricity_and_heat_per_capita + (Industry_per_capita * Land_use_change_and_forestry_per_capita)) / (exp(exp(exp(-0.3097318) * (2.8714914 * inv(Transport_per_capita)))) + 0.43659443)"
+21,0.06678293,"(Agriculture_per_capita + 6.266521) * (((Human_Development_Index * 2.8736439) - exp(inv(inv(Land_use_change_and_forestry_per_capita)) * -0.17701073)) / exp(exp(inv(Transport_per_capita) * 3.8053002)))"
+23,0.04968519,"((1.392371 - exp((inv(exp(-2.028035 - inv(inv(Land_use_change_and_forestry_per_capita)))) * -0.55422676) * Human_Development_Index)) / exp(exp(inv(Transport_per_capita) * 2.4907897))) * Electricity_and_heat_per_capita"
+28,0.04938089,"(((1.392371 - exp(inv(exp(-2.028035 - inv(inv(Land_use_change_and_forestry_per_capita)))) * -0.55422676)) / exp(exp(inv(Transport_per_capita) * 2.4907897))) * Electricity_and_heat_per_capita) + inv(Population / (0.18234552 + Agriculture_per_capita))"
+30,0.04614764,"(((1.4930955 - exp(inv(exp(-2.03787 - inv(inv(Land_use_change_and_forestry_per_capita)))) * (Human_Development_Index * -0.57219833))) / exp(exp(inv(Transport_per_capita) * 2.5166955))) * Electricity_and_heat_per_capita) + inv(Population / (Agriculture_per_capita + 0.18234552))"

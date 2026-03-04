@@ -1,0 +1,3 @@
+Complexity,Loss,Equation
+1,0.4352097,"Waste_per_capita"
+3,0.28087354,"Electricity_and_heat_per_capita * 0.12523812"
