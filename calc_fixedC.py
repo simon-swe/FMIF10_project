@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from linearmodels.panel import PanelOLS
+from sklearn.preprocessing import StandardScaler
 
 cols = [
     "Entity",
@@ -31,6 +32,8 @@ for col in feature_cols:
     df[f"{col}_lag5"] = df.groupby("Entity")[col].shift(5)
 
 df_lagged = df.dropna()
+scaler = StandardScaler()
+df_lagged[feature_cols] = scaler.fit_transform(df_lagged[feature_cols])
 print(f"\nRows before lag dropna: {len(df)}")
 print(f"Rows after lag dropna:  {len(df_lagged)}")
 
