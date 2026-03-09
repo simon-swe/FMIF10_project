@@ -6,16 +6,15 @@ from sklearn.preprocessing import StandardScaler
 cols = [
     "Entity",
     "Year",
-    "Population",
     "Agriculture per capita",
-    "Land-use change and forestry per capita",
+    #"Land-use change and forestry per capita",
     "Waste per capita",
     "Buildings per capita",
     "Industry per capita",
     "Manufacturing and construction per capita",
     "Transport per capita",
-    "Electricity and heat per capita",
-    "Fugitive emissions per capita",
+    #"Electricity and heat per capita",
+    #"Fugitive emissions per capita",
     "Human Development Index",
 ]
 
@@ -29,11 +28,12 @@ print("Years in dataset:", sorted(df.index.get_level_values("Year").unique()))
 print("Rows per country:\n", df.groupby("Entity").size())
 
 for col in feature_cols:
-    df[f"{col}_lag5"] = df.groupby("Entity")[col].shift(5)
+    df[f"{col}_lag5"] = df.groupby("Entity")[col].shift(3)
 
-df_lagged = df.dropna()
-scaler = StandardScaler()
-df_lagged[feature_cols] = scaler.fit_transform(df_lagged[feature_cols])
+df_lagged = df.dropna().copy()
+lag_cols = [f"{c}_lag5" for c in feature_cols]
+#scaler = StandardScaler()
+#df_lagged[lag_cols] = scaler.fit_transform(df_lagged[lag_cols]) #Avänd denna rad om du man vill standardisera sektorerna
 print(f"\nRows before lag dropna: {len(df)}")
 print(f"Rows after lag dropna:  {len(df_lagged)}")
 
@@ -60,38 +60,39 @@ coef_df = pd.DataFrame({
 }).sort_values("Coefficient", ascending=False)
 coef_df["Significant"] = coef_df["P-value"] < 0.05
 print(coef_df.to_string(index=False))
+
 print(f"\nR² (within):  {result_lagged.rsquared_within:.4f}")
 print(f"R² (between): {result_lagged.rsquared_between:.4f}")
 print(f"R² (overall): {result_lagged.rsquared_overall:.4f}")
+print(result_lagged.conf_int)
 
+# # --- First differences ---
+# df_reset = df[feature_cols + ["Human Development Index"]].copy()
+# df_diff = df_reset.groupby("Entity").diff().dropna()
 
-# --- First differences ---
-df_reset = df[feature_cols + ["Human Development Index"]].copy()
-df_diff = df_reset.groupby("Entity").diff().dropna()
+# diff_features = " + ".join([f'Q("{c}")' for c in feature_cols])
 
-diff_features = " + ".join([f'Q("{c}")' for c in feature_cols])
+# formula_diff = f"""
+#     Q("Human Development Index") ~
+#     1
+#     + {diff_features}
+#     + EntityEffects
+# """
 
-formula_diff = f"""
-    Q("Human Development Index") ~
-    1
-    + {diff_features}
-    + EntityEffects
-"""
+# print("\n" + "=" * 60)
+# print("MODEL 2: First Differences (year-over-year changes)")
+# print("=" * 60)
+# model_diff = PanelOLS.from_formula(formula_diff, data=df_diff)
+# result_diff = model_diff.fit(cov_type="robust")  # robust SE
 
-print("\n" + "=" * 60)
-print("MODEL 2: First Differences (year-over-year changes)")
-print("=" * 60)
-model_diff = PanelOLS.from_formula(formula_diff, data=df_diff)
-result_diff = model_diff.fit(cov_type="robust")  # robust SE
-
-coef_df2 = pd.DataFrame({
-    "Feature": result_diff.params.index,
-    "Coefficient": result_diff.params.values,
-    "Std Error": result_diff.std_errors.values,
-    "P-value": result_diff.pvalues.values,
-}).sort_values("Coefficient", ascending=False)
-coef_df2["Significant"] = coef_df2["P-value"] < 0.05
-print(coef_df2.to_string(index=False))
-print(f"\nR² (within):  {result_diff.rsquared_within:.4f}")
-print(f"R² (between): {result_diff.rsquared_between:.4f}")
-print(f"R² (overall): {result_diff.rsquared_overall:.4f}")
+# coef_df2 = pd.DataFrame({
+#     "Feature": result_diff.params.index,
+#     "Coefficient": result_diff.params.values,
+#     "Std Error": result_diff.std_errors.values,
+#     "P-value": result_diff.pvalues.values,
+# }).sort_values("Coefficient", ascending=False)
+# coef_df2["Significant"] = coef_df2["P-value"] < 0.05
+# print(coef_df2.to_string(index=False))
+# print(f"\nR² (within):  {result_diff.rsquared_within:.4f}")
+# print(f"R² (between): {result_diff.rsquared_between:.4f}")
+# print(f"R² (overall): {result_diff.rsquared_overall:.4f}")
